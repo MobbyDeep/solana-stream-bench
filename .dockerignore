@@ -1,0 +1,12 @@
+target
+.git
+.github
+.gitignore
+Dockerfile
+*.log
+node_modules
+config.toml
+config.toml.previous
+results
+transaction_log_*.txt
+.DS_Store

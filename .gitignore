@@ -1,0 +1,7 @@
+target/
+debug/
+results/
+config.toml
+**/*.rs.bk
+*.pdb
+.DS_Store

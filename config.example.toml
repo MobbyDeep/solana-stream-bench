@@ -1,0 +1,30 @@
+[config]
+transactions = 1000
+commitment = "processed"
+account = "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA"
+yellowstone_accounts_bench_enabled = true
+
+[backend]
+enabled = false
+
+[output]
+txt_file_output = true
+directory = "./results"
+filename_prefix = "solana-stream-bench"
+timestamp_format = "%Y-%m-%d_%H-%M-%S"
+
+[[endpoint]]
+name = "Jito Shredstream"
+url = "http://localhost:10000"
+kind = "shredstream"
+
+[[endpoint]]
+name = "Corvus aRPC"
+url = "https://fra.corvus-labs.io:20202"
+kind = "arpc"
+
+[[endpoint]]
+name = "Corvus gRPC"
+url = "https://fra.corvus-labs.io:10101"
+x_token = "optional-auth-token"
+kind = "yellowstone"
