@@ -36,7 +36,6 @@ pub struct Endpoint {
 pub struct OutputSettings {
     pub txt_file_output: bool,
     pub directory: String,
-    pub filename_prefix: String,
     pub timestamp_format: String,
 }
 impl Default for OutputSettings {
@@ -44,7 +43,6 @@ impl Default for OutputSettings {
         Self {
             txt_file_output: true,
             directory: "./results".into(),
-            filename_prefix: "solana-stream-bench".into(),
             timestamp_format: "%Y-%m-%d_%H-%M-%S".into(),
         }
     }
@@ -217,10 +215,6 @@ impl ConfigToml {
         anyhow::ensure!(
             !self.output.directory.is_empty(),
             "output.directory must be nonempty"
-        );
-        anyhow::ensure!(
-            crate::report::safe_component(&self.output.filename_prefix),
-            "Invalid output.filename_prefix"
         );
         anyhow::ensure!(
             !self.output.timestamp_format.is_empty()

@@ -78,7 +78,7 @@ impl AdditionalMeasurements {
         let mut output = String::new();
         output.push_str(&analysis::render_category_summary(
             &self.accounts.summary(&self.endpoints),
-            "Account updates (gRPC only)",
+            "Account updates (Yellowstone only)",
             "Valid Acc",
         ));
         output.push_str(&format!(

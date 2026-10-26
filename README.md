@@ -30,9 +30,8 @@ yellowstone_accounts_bench_enabled = true
 
 [output]
 directory = "./results"
-filename_prefix = "solana-stream-bench"
 timestamp_format = "%Y-%m-%d_%H-%M-%S"
-txt = true
+txt_file_output = true
 
 [backend]
 enabled = false
@@ -83,10 +82,10 @@ Account events are retained for the duration of the benchmark, with repeated eve
 Every completed or interrupted collection writes a UTC timestamped report by default:
 
 ```text
-results/solana-stream-bench_2026-10-26_03-19-00.txt
+results/pAMM_fXEA_2026-10-26_03-19-00.txt
 ```
 
-The filename uses run start time. The directory is created automatically; collisions append `_1`, `_2`, etc., using exclusive file creation. `output.txt = false` keeps terminal output without a file. Prefix and timestamp format must produce safe filename components.
+The filename prefix is generated from the first four and last four characters of `config.account`, separated by an underscore (for example, `pAMM_fXEA`). The timestamp uses UTC run start time. The directory is created automatically; collisions append `_1`, `_2`, etc., using exclusive file creation. `output.txt_file_output = false` keeps terminal output without a file. The timestamp format must produce a safe filename component.
 
 The final summary is rendered once, then the **same bytes** are written to stdout and TXT, including trailing newlines. It includes metadata, the transaction table, and the optional gRPC account table. No local JSON result file is generated. Progress and connection logs go to stderr; terminal escape sequences are not included in the report.
 

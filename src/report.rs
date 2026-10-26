@@ -18,15 +18,26 @@ pub fn safe_component(value: &str) -> bool {
 /// A single rendered string supplies exactly the same bytes to stdout and TXT.
 pub fn write_report(
     output: &OutputSettings,
+    account: &str,
     started_at: DateTime<Utc>,
     summary: &str,
     terminal: &mut impl Write,
 ) -> io::Result<Option<PathBuf>> {
     let mut path = None;
     if output.txt_file_output {
+        let account = account
+            .parse::<solana_pubkey::Pubkey>()
+            .map_err(|_| {
+                io::Error::new(
+                    io::ErrorKind::InvalidInput,
+                    "Invalid benchmark account public key",
+                )
+            })?
+            .to_string();
+        let prefix = format!("{}_{}", &account[..4], &account[account.len() - 4..]);
         fs::create_dir_all(&output.directory)?;
         let timestamp = started_at.format(&output.timestamp_format).to_string();
-        if !safe_component(&output.filename_prefix) || !safe_component(&timestamp) {
+        if !safe_component(&timestamp) {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidInput,
                 "Unsafe output filename",
@@ -38,10 +49,8 @@ pub fn write_report(
             } else {
                 format!("_{suffix}")
             };
-            let candidate = PathBuf::from(&output.directory).join(format!(
-                "{}_{}{extra}.txt",
-                output.filename_prefix, timestamp
-            ));
+            let candidate = PathBuf::from(&output.directory)
+                .join(format!("{}_{}{extra}.txt", prefix, timestamp));
             match OpenOptions::new()
                 .create_new(true)
                 .write(true)

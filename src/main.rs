@@ -335,7 +335,8 @@ async fn main() -> Result<()> {
     }
 
     let mut summary = format!(
-        "Solana Stream Bench\nStart (UTC): {}\nEnd (UTC): {}\nDuration: {:.3}s\nStatus: {}\n",
+        "Solana Stream Bench\nAccount: {}\nStart (UTC): {}\nEnd (UTC): {}\nDuration: {:.3}s\nStatus: {}\n",
+        config.config.account,
         report_started_at.to_rfc3339(),
         chrono::Utc::now().to_rfc3339(),
         start_instant.elapsed().as_secs_f64(),
@@ -365,6 +366,7 @@ async fn main() -> Result<()> {
         .collect();
     let path = report::write_report(
         &config.output,
+        &config.config.account,
         report_started_at,
         &summary,
         &mut std::io::stdout().lock(),

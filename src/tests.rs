@@ -93,9 +93,6 @@ fn invalid_configurations_are_rejected() {
     let mut c = config();
     c.output.timestamp_format = "%Q".into();
     assert!(c.validate().is_err());
-    let mut c = config();
-    c.output.filename_prefix = "../outside".into();
-    assert!(c.validate().is_err());
 }
 #[test]
 fn udp_uses_upstream_bare_bind_address() {
@@ -135,22 +132,36 @@ fn txt_uses_identical_summary_bytes_and_utc_start_with_collision_suffixes() {
     let started = chrono::Utc
         .with_ymd_and_hms(2026, 10, 26, 3, 19, 0)
         .unwrap();
+    let account = "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA";
     let text = "Solana Stream Bench\nTest summary\n";
     let mut terminal = Vec::new();
-    let first = report::write_report(&output, started, text, &mut terminal)
+    let first = report::write_report(&output, account, started, text, &mut terminal)
         .unwrap()
         .unwrap();
     assert_eq!(std::fs::read(&first).unwrap(), terminal);
     assert_eq!(terminal, text.as_bytes());
     assert_eq!(
         first.file_name().unwrap(),
-        "solana-stream-bench_2026-10-26_03-19-00.txt"
+        "pAMM_fXEA_2026-10-26_03-19-00.txt"
     );
-    let second = report::write_report(&output, started, text, &mut Vec::new())
+    let second = report::write_report(&output, account, started, text, &mut Vec::new())
         .unwrap()
         .unwrap();
     assert!(second.display().to_string().ends_with("_1.txt"));
     assert_eq!(std::fs::read(first).unwrap(), text.as_bytes());
+    let other = report::write_report(
+        &output,
+        "11111111111111111111111111111111",
+        started,
+        text,
+        &mut Vec::new(),
+    )
+    .unwrap()
+    .unwrap();
+    assert_eq!(
+        other.file_name().unwrap(),
+        "1111_1111_2026-10-26_03-19-00.txt"
+    );
     assert!(
         std::fs::read_dir(&output.directory).unwrap().all(|e| e
             .unwrap()
@@ -169,9 +180,15 @@ fn disabling_txt_keeps_terminal_summary_without_creating_files() {
     };
     let mut terminal = Vec::new();
     assert!(
-        report::write_report(&output, chrono::Utc::now(), "summary\n", &mut terminal)
-            .unwrap()
-            .is_none()
+        report::write_report(
+            &output,
+            &config().config.account,
+            chrono::Utc::now(),
+            "summary\n",
+            &mut terminal
+        )
+        .unwrap()
+        .is_none()
     );
     assert_eq!(terminal, b"summary\n");
 }
